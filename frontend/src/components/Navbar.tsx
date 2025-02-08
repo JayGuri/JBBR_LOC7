@@ -7,7 +7,7 @@ export function Navbar() {
         ExpenSure
       </Link>
       <div className="flex gap-8">
-        {["home", "upload", "dashboard", "contact", "about"].map((item) => (
+        {["home", "upload", "reports", "dashboard", "contact", "about"].map((item) => (
           <Link
             key={item}
             to={`/${item === "home" ? "" : item}`}
