@@ -3,7 +3,7 @@ import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
-import { Upload } from "lucide-react"
+import { Upload, FileText } from "lucide-react"
 
 export function CompanyPolicyUpload() {
   const [file, setFile] = useState<File | null>(null)
@@ -24,19 +24,33 @@ export function CompanyPolicyUpload() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Upload Company Policy</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Input type="file" accept=".pdf" onChange={handleFileChange} className="mb-4" />
-        <Button onClick={handleUpload} disabled={!file} className="w-full">
-          <Upload className="mr-2 h-4 w-4" />
-          Upload Policy
-        </Button>
-        {file && <p className="mt-2 text-sm text-gray-500">Selected file: {file.name}</p>}
-      </CardContent>
-    </Card>
+    <div className="space-y-8">
+      <h1 className="text-3xl font-semibold text-gray-800">Company Policy</h1>
+      <Card>
+        <CardHeader>
+          <CardTitle>Upload New Policy</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="flex items-center space-x-4">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
+                  <FileText className="w-6 h-6 text-gray-500" />
+                </div>
+              </div>
+              <div className="flex-grow">
+                <Input type="file" accept=".pdf" onChange={handleFileChange} className="w-full" />
+              </div>
+            </div>
+            {file && <p className="text-sm text-gray-500">Selected file: {file.name}</p>}
+            <Button onClick={handleUpload} disabled={!file} className="w-full">
+              <Upload className="mr-2 h-4 w-4" />
+              Upload Policy
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   )
 }
 

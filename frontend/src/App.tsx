@@ -13,7 +13,7 @@ export default function App() {
         <Route path="/" element={<LandingPage customImageSrc={customImageSrc} />} />
         <Route path="/upload" element={<UploadPage />} />
         <Route path="/reports" element={<ReportsPage />} />
-        <Route path="/admin" element={<AdminPage />} />
+        <Route path="/admin/*" element={<AdminPage />} />
       </Routes>
     </Router>
   )
