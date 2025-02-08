@@ -60,7 +60,7 @@ export function ReportDisplay({ report, onSubmit, onChatOpen }: ReportDisplayPro
             id="justification"
             value={justification}
             onChange={(e) => setJustification(e.target.value)}
-            className="w-full p-2 border rounded text-[#000000]"
+            className="w-full p-2 border rounded text-[#ffffff]"
             placeholder="Enter your justification here..."
           />
         </div>

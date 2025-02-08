@@ -12,7 +12,7 @@ const dummyData: AppData = {
     { id: "2", name: "Aish", email: "aish@example.com", role: "admin" },
     { id: "3", name: "Harshil", email: "harshil@example.com", role: "admin" },
     { id: "4", name: "Akshat", email: "akshat@example.com", role: "admin" },
-    { id: "5", name: "Jay Mguri", email: "jaymguri@gmail.com", role: "user" },
+    { id: "5", name: "Jay M Guri", email: "jaymguri@gmail.com", role: "user" },
     { id: "6", name: "Sharan", email: "sharan@example.com", role: "user" },
   ],
   reports: [
