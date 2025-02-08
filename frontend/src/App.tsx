@@ -1,15 +1,12 @@
 import { BrowserRouter as Router } from "react-router-dom"
-import { Navbar } from "./components/Navbar"
-import { Hero } from "./components/Hero"
+import { LandingPage } from "./pages/LandingPage"
 
 export default function App() {
+  const customImageSrc = "/hero.jpg" // Adjust this path as needed
+
   return (
     <Router>
-      <div className="min-h-screen bg-[#161a34] overflow-hidden">
-        <Navbar />
-        <Hero />
-      </div>
+      <LandingPage customImageSrc={customImageSrc} />
     </Router>
   )
 }
-
