@@ -11,6 +11,7 @@ export function SignupPage() {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [message, setMessage] = useState("")
   const { signup } = useAppData()
   const navigate = useNavigate()
 
@@ -18,36 +19,59 @@ export function SignupPage() {
     e.preventDefault()
     const user = await signup(name, email, password)
     if (user) {
-      navigate("/")
+      setMessage("Signup successful! Redirecting to home page...")
+      setTimeout(() => navigate("/"), 2000)
     } else {
-      alert("Signup failed. User may already exist.")
+      setMessage("Signup failed. User may already exist.")
     }
   }
 
   return (
-    <div className="min-h-screen bg-[#ffffff] flex items-center justify-center">
+    <div className="min-h-screen bg-[#e6f3ff] flex items-center justify-center">
       <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md w-96">
-        <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center text-[#161A34]">Sign Up</h2>
+        {message && <p className="mb-4 text-center text-[#161A34]">{message}</p>}
         <div className="space-y-4">
           <div>
-            <Label htmlFor="name">Name</Label>
-            <Input id="name" type="text" value={name} onChange={(e) => setName(e.target.value)} required />
+            <Label htmlFor="name" className="text-[#161A34]">
+              Name
+            </Label>
+            <Input
+              id="name"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className="bg-white border-[#161A34] focus:border-[#161A34] focus:ring-[#161A34] text-[#161A34]"
+            />
           </div>
           <div>
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            <Label htmlFor="email" className="text-[#161A34]">
+              Email
+            </Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="bg-white border-[#161A34] focus:border-[#161A34] focus:ring-[#161A34] text-[#161A34]"
+            />
           </div>
           <div>
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password" className="text-[#161A34]">
+              Password
+            </Label>
             <Input
               id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              className="bg-white border-[#161A34] focus:border-[#161A34] focus:ring-[#161A34] text-[#161A34]"
             />
           </div>
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-full bg-[#161A34] hover:bg-[#161A34]/90 text-white">
             Sign Up
           </Button>
         </div>

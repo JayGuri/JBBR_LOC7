@@ -204,6 +204,9 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
       }
     })
 
+    // In a real application, you would save the password securely here
+    console.log(`New user registered: ${name} (${email})`)
+
     return newUser
   }
 
@@ -215,7 +218,8 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
     if (user) {
       if (
         (user.role === "admin" && password === "pass@123") ||
-        (user.email === "jaymguri@gmail.com" && password === "vrishti15")
+        (user.email === "jaymguri@gmail.com" && password === "vrishti15") ||
+        (user.role === "user" && password === "userpass") // Default password for new users
       ) {
         setAppData((prevData) => (prevData ? { ...prevData, currentUser: user } : null))
         return user
