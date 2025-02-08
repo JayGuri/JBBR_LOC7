@@ -100,7 +100,7 @@ export function ReportsPage() {
     <div className="min-h-screen bg-[#ffffff]">
       <Navbar />
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold mb-8 text-[#000000]">Expense Reports</h1>
+        <h1 className="text-4xl font-normal mb-8 text-[#000000] font-['Space_Grotesk']">Current Status</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {dummyReports.map((report) => (
             <SpotlightCard
@@ -111,7 +111,9 @@ export function ReportsPage() {
             >
               <div className="flex flex-col h-full">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-bold text-[#000000] group-hover:text-[#161a34]">{report.title}</h3>
+                  <h3 className="text-lg font-normal text-[#000000] group-hover:text-[#161a34] font-['Space_Grotesk']">
+                    {report.title}
+                  </h3>
                   <Badge className={`${statusConfig[report.status].color} transition-transform group-hover:scale-105`}>
                     {React.createElement(statusConfig[report.status].icon, { className: "w-4 h-4 mr-1" })}
                     {report.status.replace("_", " ")}
@@ -150,7 +152,7 @@ export function ReportsPage() {
       <Dialog open={!!selectedReport} onOpenChange={() => setSelectedReport(null)}>
         <DialogContent className="bg-[#ffffff] text-[#000000] max-w-2xl">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold flex items-center justify-between">
+            <DialogTitle className="text-2xl font-normal flex items-center justify-between font-['Space_Grotesk']">
               {selectedReport?.title}
               {selectedReport && (
                 <Badge className={statusConfig[selectedReport.status].color}>
@@ -196,7 +198,7 @@ export function ReportsPage() {
                   )}
                 </div>
                 <div className="mt-6">
-                  <h4 className="font-semibold mb-2">Details</h4>
+                  <h4 className="font-normal mb-2 font-['Space_Grotesk']">Details</h4>
                   <p className="text-gray-600">{selectedReport?.content}</p>
                 </div>
               </div>
