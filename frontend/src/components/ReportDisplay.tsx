@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { AlertTriangle, CheckCircle, XCircle, MessageSquare } from "lucide-react"
 import type { Report } from "../types/data"
+import { useAppData } from "../contexts/AppDataContent"
 
 interface ReportDisplayProps {
   report: Report
@@ -13,7 +14,10 @@ interface ReportDisplayProps {
 }
 
 export function ReportDisplay({ report, onSubmit, onChatOpen }: ReportDisplayProps) {
+  const { users } = useAppData()
   const [justification, setJustification] = useState("")
+
+  const userName = users.find((user) => user.id === report.userId)?.name || "Unknown User"
 
   const statusIcon = {
     green: <CheckCircle className="w-6 h-6 text-green-500" />,
@@ -32,6 +36,7 @@ export function ReportDisplay({ report, onSubmit, onChatOpen }: ReportDisplayPro
       <div className="flex items-center mb-4">
         {statusIcon[report.aiTag]}
         <span className="ml-2 text-lg font-semibold text-[#000000]">{statusText[report.aiTag]}</span>
+        <span className="ml-2 text-sm text-gray-500">Submitted by: {userName}</span>
       </div>
       <div className="mb-4 text-[#000000]">{report.content}</div>
       {report.flaggedItems && (

@@ -17,7 +17,10 @@ export interface Report {
   aiTag: "green" | "yellow" | "red"
   description: string
   content: string
-  flaggedItems?: string[]
+  category: string
+  vendor: string
+  gstNumber: string
+  billNumber: string
 }
 
 export interface ExpenseCategory {
@@ -33,7 +36,7 @@ export interface CompanyPolicy {
 }
 
 export interface AppData {
-  currentUser: User
+  currentUser: User | null
   users: User[]
   reports: Report[]
   expenseCategories: ExpenseCategory[]

@@ -19,9 +19,9 @@ export function AdminReports() {
     pendingReports: reports.filter((report) => report.userId === user.id && report.status === "pending").length,
   }))
 
-  const filteredEmployees = employeesWithPendingReports.filter((employee) =>
-    employee.name.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+  const filteredEmployees = employeesWithPendingReports
+    .filter((employee) => employee.pendingReports > 0)
+    .filter((employee) => employee.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
   const handleViewReports = (employeeId: string) => {
     setSelectedEmployee(employeeId)
