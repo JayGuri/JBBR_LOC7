@@ -4,8 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { Upload, FileText } from "lucide-react"
+import { useAppData } from "../../contexts/AppDataContent"
 
 export function CompanyPolicyUpload() {
+  const { companyPolicies } = useAppData()
   const [file, setFile] = useState<File | null>(null)
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,6 +50,21 @@ export function CompanyPolicyUpload() {
               Upload Policy
             </Button>
           </div>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>Existing Policies</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ul className="space-y-2">
+            {companyPolicies.map((policy) => (
+              <li key={policy.id} className="flex justify-between items-center">
+                <span>{policy.name}</span>
+                <span className="text-sm text-gray-500">{policy.uploadDate}</span>
+              </li>
+            ))}
+          </ul>
         </CardContent>
       </Card>
     </div>

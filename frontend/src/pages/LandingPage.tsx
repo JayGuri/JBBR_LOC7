@@ -1,10 +1,13 @@
 import { Navbar } from "../components/Navbar"
+import { useAppData } from "../contexts/AppDataContent"
 
 interface LandingPageProps {
   customImageSrc: string
 }
 
 export function LandingPage({ customImageSrc }: LandingPageProps) {
+  const { currentUser } = useAppData()
+
   return (
     <div className="h-screen bg-[#ffffff] relative overflow-hidden flex flex-col">
       <Navbar />
@@ -14,8 +17,6 @@ export function LandingPage({ customImageSrc }: LandingPageProps) {
         <div className="flex-1 flex items-start justify-between">
           {/* Left Side - Text Content */}
           <div className="max-w-xl pl-12 mt-20">
-            {" "}
-            {/* Updated: added mt-20 to lower the content */}
             <h1 className="text-[80px] font-normal leading-tight text-[#000000]">
               Discover
               <br />
@@ -29,12 +30,20 @@ export function LandingPage({ customImageSrc }: LandingPageProps) {
               seamless AI-driven fraud detection
             </p>
             <div className="flex gap-4">
-              <button className="px-8 py-3 bg-[#ffdbdb] rounded-full text-[#000000] font-medium text-lg transition-all duration-300 ease-in-out hover:bg-[#ffc9c9] hover:transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-[#ffdbdb] focus:ring-opacity-50">
-                Login
-              </button>
-              <button className="px-8 py-3 bg-[#ffdbdb] rounded-full text-[#000000] font-medium text-lg transition-all duration-300 ease-in-out hover:bg-[#ffc9c9] hover:transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-[#ffdbdb] focus:ring-opacity-50">
-                Sign Up
-              </button>
+              {currentUser ? (
+                <button className="px-8 py-3 bg-[#ffdbdb] rounded-full text-[#000000] font-medium text-lg transition-all duration-300 ease-in-out hover:bg-[#ffc9c9] hover:transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-[#ffdbdb] focus:ring-opacity-50">
+                  Dashboard
+                </button>
+              ) : (
+                <>
+                  <button className="px-8 py-3 bg-[#ffdbdb] rounded-full text-[#000000] font-medium text-lg transition-all duration-300 ease-in-out hover:bg-[#ffc9c9] hover:transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-[#ffdbdb] focus:ring-opacity-50">
+                    Login
+                  </button>
+                  <button className="px-8 py-3 bg-[#ffdbdb] rounded-full text-[#000000] font-medium text-lg transition-all duration-300 ease-in-out hover:bg-[#ffc9c9] hover:transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-[#ffdbdb] focus:ring-opacity-50">
+                    Sign Up
+                  </button>
+                </>
+              )}
             </div>
           </div>
           {/* Right Side - Custom Image */}

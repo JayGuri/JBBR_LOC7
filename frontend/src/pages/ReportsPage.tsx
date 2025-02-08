@@ -6,85 +6,12 @@ import { Badge } from "../components/ui/badge"
 import { AlertTriangle, CheckCircle, Clock, XCircle, ChevronRight, Calendar, User, DollarSign } from "lucide-react"
 import SpotlightCard from "../components/SpotlightCard"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "../components/ui/dialog"
-
-type ReportStatus = "approved" | "rejected" | "under_evaluation"
-type AITag = "green" | "yellow" | "red"
-
-interface Report {
-  id: string
-  title: string
-  date: string
-  amount: number
-  status: ReportStatus
-  aiTag?: AITag
-  submittedBy: string
-  content: string
-}
-
-const dummyReports: Report[] = [
-  {
-    id: "1",
-    title: "Office Supplies",
-    date: "2023-05-01",
-    amount: 150.75,
-    status: "approved",
-    submittedBy: "John Doe",
-    content: "Purchase of various office supplies including paper, pens, and printer ink.",
-  },
-  {
-    id: "2",
-    title: "Client Dinner",
-    date: "2023-05-05",
-    amount: 89.99,
-    status: "under_evaluation",
-    aiTag: "green",
-    submittedBy: "Jane Smith",
-    content: "Dinner with potential client to discuss new project opportunities.",
-  },
-  {
-    id: "3",
-    title: "Travel Expenses",
-    date: "2023-05-10",
-    amount: 523.5,
-    status: "under_evaluation",
-    aiTag: "yellow",
-    submittedBy: "Mike Johnson",
-    content: "Flight and hotel expenses for the annual industry conference.",
-  },
-  {
-    id: "4",
-    title: "Software Subscription",
-    date: "2023-05-15",
-    amount: 299.99,
-    status: "rejected",
-    submittedBy: "Emily Brown",
-    content: "Annual subscription for project management software.",
-  },
-  {
-    id: "5",
-    title: "Team Building Event",
-    date: "2023-05-20",
-    amount: 750.0,
-    status: "under_evaluation",
-    aiTag: "red",
-    submittedBy: "David Wilson",
-    content: "Expenses for team building activity including venue rental and catering.",
-  },
-  {
-    id: "6",
-    title: "Office Rent",
-    date: "2023-05-25",
-    amount: 2000.0,
-    status: "approved",
-    submittedBy: "Sarah Lee",
-    content: "Monthly office space rent payment.",
-  },
-]
+import { useAppData } from "../contexts/AppDataContent"
 
 const statusConfig = {
   approved: { color: "bg-green-100 text-green-800", icon: CheckCircle },
   rejected: { color: "bg-red-100 text-red-800", icon: XCircle },
-  under_evaluation: { color: "bg-yellow-100 text-yellow-800", icon: Clock },
+  pending: { color: "bg-yellow-100 text-yellow-800", icon: Clock },
 }
 
 const aiTagConfig = {
@@ -94,15 +21,16 @@ const aiTagConfig = {
 }
 
 export function ReportsPage() {
-  const [selectedReport, setSelectedReport] = useState<Report | null>(null)
+  const { reports, users } = useAppData()
+  const [selectedReport, setSelectedReport] = useState<(typeof reports)[0] | null>(null)
 
   return (
     <div className="min-h-screen bg-[#ffffff]">
       <Navbar />
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-normal mb-8 text-[#000000] font-['Space_Grotesk']">Current Status</h1>
+        <h1 className="text-4xl font-normal mb-8 text-[#000000] font-['Space_Grotesk']">Expense Reports</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {dummyReports.map((report) => (
+          {reports.map((report) => (
             <SpotlightCard
               key={report.id}
               className="cursor-pointer group"
@@ -116,7 +44,7 @@ export function ReportsPage() {
                   </h3>
                   <Badge className={`${statusConfig[report.status].color} transition-transform group-hover:scale-105`}>
                     {React.createElement(statusConfig[report.status].icon, { className: "w-4 h-4 mr-1" })}
-                    {report.status.replace("_", " ")}
+                    {report.status}
                   </Badge>
                 </div>
                 <div className="flex-grow space-y-3">
@@ -126,18 +54,18 @@ export function ReportsPage() {
                   </div>
                   <div className="flex items-center text-gray-600">
                     <User className="w-4 h-4 mr-2" />
-                    <span className="text-sm">{report.submittedBy}</span>
+                    <span className="text-sm">
+                      {users.find((user) => user.id === report.userId)?.name || "Unknown User"}
+                    </span>
                   </div>
                   <div className="flex items-center text-[#000000] font-semibold">
                     <DollarSign className="w-4 h-4 mr-2" />
                     <span>${report.amount.toFixed(2)}</span>
                   </div>
-                  {report.aiTag && (
-                    <Badge className={`${aiTagConfig[report.aiTag].color} transition-transform group-hover:scale-105`}>
-                      <AlertTriangle className="w-4 h-4 mr-1" />
-                      {aiTagConfig[report.aiTag].text}
-                    </Badge>
-                  )}
+                  <Badge className={`${aiTagConfig[report.aiTag].color} transition-transform group-hover:scale-105`}>
+                    <AlertTriangle className="w-4 h-4 mr-1" />
+                    {aiTagConfig[report.aiTag].text}
+                  </Badge>
                 </div>
                 <div className="mt-4 flex items-center text-[#161a34] group-hover:text-[#161a34]/80">
                   <span className="text-sm font-medium">View Details</span>
@@ -157,7 +85,7 @@ export function ReportsPage() {
               {selectedReport && (
                 <Badge className={statusConfig[selectedReport.status].color}>
                   {React.createElement(statusConfig[selectedReport.status].icon, { className: "w-4 h-4 mr-1" })}
-                  {selectedReport.status.replace("_", " ")}
+                  {selectedReport.status}
                 </Badge>
               )}
             </DialogTitle>
@@ -175,7 +103,9 @@ export function ReportsPage() {
                     <User className="w-5 h-5 mr-2 text-gray-500" />
                     <div>
                       <p className="text-sm text-gray-500">Submitted By</p>
-                      <p className="font-medium">{selectedReport?.submittedBy}</p>
+                      <p className="font-medium">
+                        {users.find((user) => user.id === selectedReport?.userId)?.name || "Unknown User"}
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center">
@@ -199,7 +129,7 @@ export function ReportsPage() {
                 </div>
                 <div className="mt-6">
                   <h4 className="font-normal mb-2 font-['Space_Grotesk']">Details</h4>
-                  <p className="text-gray-600">{selectedReport?.content}</p>
+                  <p className="text-gray-600">{selectedReport?.description}</p>
                 </div>
               </div>
             </DialogDescription>

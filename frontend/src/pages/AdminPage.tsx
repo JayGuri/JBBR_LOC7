@@ -4,8 +4,16 @@ import { AdminDashboard } from "../components/admin/AdminDashboard"
 import { AdminReports } from "../components/admin/AdminReports"
 import { CompanyPolicyUpload } from "../components/admin/CompanyPolicyUpload"
 import { AdminSettings } from "../components/admin/AdminSettings"
+import { useAppData } from "../contexts/AppDataContent"
+import { Navigate } from "react-router-dom"
 
 export function AdminPage() {
+  const { currentUser } = useAppData()
+
+  if (currentUser.role !== "admin") {
+    return <Navigate to="/" replace />
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <AdminNavbar />

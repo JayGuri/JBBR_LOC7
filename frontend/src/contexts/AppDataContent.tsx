@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
-import type { AppData } from "../types/data"
+import type { AppData, User, Report, ExpenseCategory, CompanyPolicy } from "../types/data"
 
 // Dummy data
 const dummyData: AppData = {
@@ -27,6 +27,7 @@ const dummyData: AppData = {
       status: "pending",
       aiTag: "green",
       description: "Lunch meeting with potential client",
+      content: "Detailed content for Business Lunch report",
     },
     {
       id: "2",
@@ -37,6 +38,7 @@ const dummyData: AppData = {
       status: "pending",
       aiTag: "yellow",
       description: "Purchased new printer cartridges and paper",
+      content: "Detailed content for Office Supplies report",
     },
     {
       id: "3",
@@ -47,6 +49,7 @@ const dummyData: AppData = {
       status: "pending",
       aiTag: "red",
       description: "Flight and hotel for conference",
+      content: "Detailed content for Travel Expenses report",
     },
   ],
   expenseCategories: [
@@ -66,7 +69,17 @@ const dummyData: AppData = {
   ],
 }
 
-const AppDataContext = createContext<AppData | null>(null)
+interface AppDataContextType extends AppData {
+  updateUser: (user: User) => void
+  addReport: (report: Report) => void
+  updateReport: (report: Report) => void
+  addExpenseCategory: (category: ExpenseCategory) => void
+  updateExpenseCategory: (category: ExpenseCategory) => void
+  addCompanyPolicy: (policy: CompanyPolicy) => void
+  updateCompanyPolicy: (policy: CompanyPolicy) => void
+}
+
+const AppDataContext = createContext<AppDataContextType | null>(null)
 
 export const useAppData = () => {
   const context = useContext(AppDataContext)
@@ -90,10 +103,95 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
     fetchData()
   }, [])
 
+  const updateUser = (updatedUser: User) => {
+    setAppData((prevData) => {
+      if (!prevData) return null
+      return {
+        ...prevData,
+        users: prevData.users.map((user) => (user.id === updatedUser.id ? updatedUser : user)),
+      }
+    })
+  }
+
+  const addReport = (newReport: Report) => {
+    setAppData((prevData) => {
+      if (!prevData) return null
+      return {
+        ...prevData,
+        reports: [...prevData.reports, newReport],
+      }
+    })
+  }
+
+  const updateReport = (updatedReport: Report) => {
+    setAppData((prevData) => {
+      if (!prevData) return null
+      return {
+        ...prevData,
+        reports: prevData.reports.map((report) => (report.id === updatedReport.id ? updatedReport : report)),
+      }
+    })
+  }
+
+  const addExpenseCategory = (newCategory: ExpenseCategory) => {
+    setAppData((prevData) => {
+      if (!prevData) return null
+      return {
+        ...prevData,
+        expenseCategories: [...prevData.expenseCategories, newCategory],
+      }
+    })
+  }
+
+  const updateExpenseCategory = (updatedCategory: ExpenseCategory) => {
+    setAppData((prevData) => {
+      if (!prevData) return null
+      return {
+        ...prevData,
+        expenseCategories: prevData.expenseCategories.map((category) =>
+          category.category === updatedCategory.category ? updatedCategory : category,
+        ),
+      }
+    })
+  }
+
+  const addCompanyPolicy = (newPolicy: CompanyPolicy) => {
+    setAppData((prevData) => {
+      if (!prevData) return null
+      return {
+        ...prevData,
+        companyPolicies: [...prevData.companyPolicies, newPolicy],
+      }
+    })
+  }
+
+  const updateCompanyPolicy = (updatedPolicy: CompanyPolicy) => {
+    setAppData((prevData) => {
+      if (!prevData) return null
+      return {
+        ...prevData,
+        companyPolicies: prevData.companyPolicies.map((policy) =>
+          policy.id === updatedPolicy.id ? updatedPolicy : policy,
+        ),
+      }
+    })
+  }
+
   if (!appData) {
     return <div>Loading...</div>
   }
 
-  return <AppDataContext.Provider value={appData}>{children}</AppDataContext.Provider>
+  const contextValue: AppDataContextType = {
+    ...appData,
+    updateUser,
+    addReport,
+    updateReport,
+    addExpenseCategory,
+    updateExpenseCategory,
+    addCompanyPolicy,
+    updateCompanyPolicy,
+  }
+
+  return <AppDataContext.Provider value={contextValue}>{children}</AppDataContext.Provider>
 }
 

@@ -4,15 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { AlertTriangle, CheckCircle, XCircle, MessageSquare } from "lucide-react"
-
-type ReportStatus = "green" | "yellow" | "red"
-
-interface Report {
-  id: string
-  status: ReportStatus
-  content: string
-  flaggedItems?: string[]
-}
+import type { Report } from "../types/data"
 
 interface ReportDisplayProps {
   report: Report
@@ -38,8 +30,8 @@ export function ReportDisplay({ report, onSubmit, onChatOpen }: ReportDisplayPro
   return (
     <div className="bg-[#ffffff] p-6 rounded-lg shadow-lg max-w-2xl mx-auto">
       <div className="flex items-center mb-4">
-        {statusIcon[report.status]}
-        <span className="ml-2 text-lg font-semibold text-[#000000]">{statusText[report.status]}</span>
+        {statusIcon[report.aiTag]}
+        <span className="ml-2 text-lg font-semibold text-[#000000]">{statusText[report.aiTag]}</span>
       </div>
       <div className="mb-4 text-[#000000]">{report.content}</div>
       {report.flaggedItems && (
@@ -54,7 +46,7 @@ export function ReportDisplay({ report, onSubmit, onChatOpen }: ReportDisplayPro
           </ul>
         </div>
       )}
-      {report.status !== "green" && (
+      {report.status !== "approved" && (
         <div className="mb-4">
           <label htmlFor="justification" className="block mb-2 font-semibold text-[#000000]">
             Provide additional context:
@@ -63,7 +55,7 @@ export function ReportDisplay({ report, onSubmit, onChatOpen }: ReportDisplayPro
             id="justification"
             value={justification}
             onChange={(e) => setJustification(e.target.value)}
-            className="w-full p-2 border rounded text-[#ffffff]"
+            className="w-full p-2 border rounded text-[#000000]"
             placeholder="Enter your justification here..."
           />
         </div>

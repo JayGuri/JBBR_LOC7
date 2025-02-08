@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom"
+import { useAppData } from "../../contexts/AppDataContent"
 
 const navItems = [
   { name: "Dashboard", path: "/admin" },
@@ -9,6 +10,7 @@ const navItems = [
 
 export function AdminNavbar() {
   const location = useLocation()
+  const { currentUser } = useAppData()
 
   return (
     <nav className="bg-[#161A34] text-white p-4">
@@ -29,9 +31,12 @@ export function AdminNavbar() {
             </Link>
           ))}
         </div>
-        <Link to="/" className="text-sm font-light text-gray-300 hover:text-white transition-colors">
-          Exit Admin
-        </Link>
+        <div className="flex items-center space-x-4">
+          <span className="text-sm font-light">{currentUser.name}</span>
+          <Link to="/" className="text-sm font-light text-gray-300 hover:text-white transition-colors">
+            Exit Admin
+          </Link>
+        </div>
       </div>
     </nav>
   )

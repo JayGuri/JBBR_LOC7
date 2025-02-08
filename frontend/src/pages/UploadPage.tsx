@@ -7,32 +7,11 @@ import { Upload } from "lucide-react"
 import { UploadModal } from "../components/UploadModal"
 import { ReportDisplay } from "../components/ReportDisplay"
 import { Chatbot } from "../components/Chatbot"
-
-type ReportStatus = "green" | "yellow" | "red"
-
-interface Report {
-  id: string
-  status: ReportStatus
-  content: string
-  flaggedItems?: string[]
-}
-
-// Mock function to simulate report generation
-const generateReport = (file: File) => {
-  // In a real application, this would be an API call to process the file and generate a report
-  return new Promise<Report>((resolve) => {
-    setTimeout(() => {
-      resolve({
-        id: Math.random().toString(36).substr(2, 9),
-        status: ["green", "yellow", "red"][Math.floor(Math.random() * 3)] as ReportStatus,
-        content: `This is an automated report for the file "${file.name}". The total expense amount is $${Math.floor(Math.random() * 1000)}.`,
-        flaggedItems: Math.random() > 0.5 ? ["Item 1 is over budget", "Item 2 is missing receipt"] : undefined,
-      })
-    }, 2000)
-  })
-}
+import { useAppData } from "../contexts/AppDataContent"
+import type { Report, ReportStatus } from "../types/data"
 
 export function UploadPage() {
+  const { currentUser } = useAppData()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [report, setReport] = useState<Report | null>(null)
   const [isChatOpen, setIsChatOpen] = useState(false)
@@ -41,7 +20,19 @@ export function UploadPage() {
   const handleFileUpload = async (file: File) => {
     setIsModalOpen(false)
     setIsReportCancelled(false)
-    const generatedReport = await generateReport(file)
+    // Simulate report generation
+    const generatedReport: Report = {
+      id: Math.random().toString(36).substr(2, 9),
+      userId: currentUser.id,
+      title: file.name,
+      amount: Math.floor(Math.random() * 1000),
+      date: new Date().toISOString().split("T")[0],
+      status: "pending" as ReportStatus,
+      aiTag: ["green", "yellow", "red"][Math.floor(Math.random() * 3)] as "green" | "yellow" | "red",
+      description: `This is an automated report for the file "${file.name}".`,
+      content: `Detailed content for the report of file "${file.name}".`,
+      flaggedItems: Math.random() > 0.5 ? ["Item 1 is over budget", "Item 2 is missing receipt"] : undefined,
+    }
     setReport(generatedReport)
   }
 
@@ -64,19 +55,19 @@ export function UploadPage() {
       <div className="flex-1 flex flex-col items-center justify-center px-4 relative">
         {/* Decorative images */}
         <img
-          src="./Left.png"
+          src="/Left.png"
           alt=""
           className="absolute top-[10%] left-[5%] w-[15%] max-w-[100px] opacity-70 transform -rotate-12 hover:rotate-0 transition-all duration-300 ease-in-out filter drop-shadow-md"
           aria-hidden="true"
         />
         <img
-          src="./Bottom.png"
+          src="/Bottom.png"
           alt=""
           className="absolute bottom-[15%] left-[10%] w-[25%] max-w-[200px] opacity-80 transform rotate-6 hover:rotate-0 transition-all duration-300 ease-in-out filter drop-shadow-lg"
           aria-hidden="true"
         />
         <img
-          src="./Expanded.png"
+          src="/Expanded.png"
           alt=""
           className="absolute bottom-[20%] right-[5%] w-[20%] max-w-[150px] opacity-70 transform rotate-12 hover:rotate-0 transition-all duration-300 ease-in-out filter drop-shadow-md"
           aria-hidden="true"
