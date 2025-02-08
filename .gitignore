@@ -1,5 +1,0 @@
-.env
-input/receipt_images/*
-output/processed_receipts/*
-__pycache__/
-*.pyc
