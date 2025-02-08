@@ -1,0 +1,6 @@
+requests
+pillow
+pandas
+tqdm
+python-dotenv
+openpyxl
