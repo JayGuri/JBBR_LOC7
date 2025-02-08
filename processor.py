@@ -1,7 +1,6 @@
 import logging
 import os
 import json
-import re
 from datetime import datetime
 from paddleocr import PaddleOCR, draw_ocr
 import ollama
@@ -23,70 +22,70 @@ class ReceiptProcessor:
         """Extract strings using simple list comprehension"""
         return [item[1] for item in data[0]]
 
-    def extract_gst_number(self, text):
-        """Extract GST number using regex patterns"""
-        # Common GST number patterns
-        gst_patterns = [
-            r'GST\s*(?:No\.?|Number|#)?\s*:?\s*([0-9A-Z]{15})',  # Standard GST format
-            r'GSTIN\s*:?\s*([0-9A-Z]{15})',                      # GSTIN format
-            r'([0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9A-Z]{3})'    # Raw GST number
-        ]
-        
-        for pattern in gst_patterns:
-            match = re.search(pattern, text)
-            if match:
-                return match.group(1)
-        return None
-
-    def extract_bill_number(self, text):
-        """Extract bill/invoice number using regex patterns"""
-        # Common bill/invoice number patterns
-        bill_patterns = [
-            r'(?:Bill|Invoice|Transaction|Receipt)\s*(?:No\.?|Number|#|ID)?\s*:?\s*([A-Za-z0-9-/]{1,20})',
-            r'(?:Order|Ref)\s*(?:No\.?|Number|#|ID)?\s*:?\s*([A-Za-z0-9-/]{1,20})'
-        ]
-        
-        for pattern in bill_patterns:
-            match = re.search(pattern, text, re.IGNORECASE)
-            if match:
-                return match.group(1)
-        return None
-
     def query_qwen2(self, text):
-        """Sends text to the locally running Qwen2.5-3B model and forces valid JSON output."""
-        # Extract GST and Bill numbers before sending to LLM
-        gst_number = self.extract_gst_number(text)
-        bill_number = self.extract_bill_number(text)
-        
+        """Sends text to the locally running Qwen2.5-3B model with a focused prompt"""
         prompt = f"""
-        Extract structured details from the following receipt text. Respond only in JSON format without any extra text.
-        **Input Receipt Text:**
+        Analyze this receipt text and extract key information. The text may have missing spaces or joined words due to OCR processing.
+
+        Example of how text might appear:
+        - "WalmartStore" instead of "Walmart Store"
+        - "Rs.1450.00" or "Rs1450.00" instead of "Rs. 1450.00"
+        - "Date:25/01/2024" instead of "Date: 25/01/2024"
+        - "GSTIN27XXXXX" instead of "GSTIN: 27XXXXX"
+        - "billno12345" or "invoiceno12345" instead of "Bill No: 12345"
+        - "inv8179912"" or "invoiceno123" instead of invoice : 8179912"" or "invoiceno : 123" or "Invoice : 817991 "
+        
+        Look for these patterns or similar to these:
+        1. GST numbers:
+        - "GSTIN27AAAAA1234A1Z5"
+        - "gst27AAAAA1234A1Z5"
+        - "gstin27AAAAA1234A1Z5"
+        - Any 15-character sequence starting with numbers
+
+        2. Bill/Invoice numbers or similar to these :
+        - "billno12345"
+        - "invoiceno123"
+        - "bill#12345"
+        - "inv8179912"
+        -"inv : 7821971"
+        - Look for numbers near words like "bill", "invoice", "ref", "no",inv,Inv,1nv
+        
+        3. Amounts like:
+        - "1450.00"
+        - "Rs1450"
+        - "₹1,450.00"
+        - "1450/-"
+        - "amountdue1450"
+        
+        4. Dates like:
+        - "25/01/2024"
+        - "25-01-2024"
+        - "date25012024"
+        - "dt25012024"
+
+        Receipt text to analyze:
         \"\"\"{text}\"\"\"
-        **JSON Format (Example Output):**
+
+        Return only this JSON format with these exact fields:
         {{
-            "vendor": "Walmart",
-            "amount": "45.67",
-            "date": "2024-02-08",
-            "category": "Grocery",
-            "gst_number": "{gst_number if gst_number else ''}",
-            "bill_number": "{bill_number if bill_number else ''}",
-            "payment_method": "Card/Cash/UPI",
-            "items": [
-                {{"item": "Product name", "quantity": "1", "price": "10.00"}}
-            ]
+            "vendor": "Store name",
+            "amount": "Total amount (numbers only, no currency symbols)",
+            "date": "YYYY-MM-DD format if possible",
+            "category": "Grocery/Restaurant/Electronics/General/Services",
+            "gst_number": "15-character GST number if found, empty string if not found",
+            "bill_number": "Bill/invoice number if found, empty string if not found"
         }}
-        Now, extract details from the given receipt and return only JSON:
         """
-        response = ollama.chat(model='qwen2.5:3b', messages=[{"role": "user", "content": prompt}])
+        
+        response = ollama.chat(
+            model='qwen2.5:3b',
+            messages=[{"role": "user", "content": prompt}],
+            options={"temperature": 0.25}
+        )
         json_text = response['message']['content'].strip()
         
         try:
             structured_data = json.loads(json_text)
-            # Override LLM's GST and bill number with regex results if available
-            if gst_number:
-                structured_data['gst_number'] = gst_number
-            if bill_number:
-                structured_data['bill_number'] = bill_number
             return structured_data
         except json.JSONDecodeError:
             print(f"Error: Invalid JSON response for text: {text[:100]}...")
@@ -94,7 +93,8 @@ class ReceiptProcessor:
 
     def process_receipt(self, ocr_text_list):
         """Process single receipt text to structured data"""
-        combined_text = " ".join([text[0] for text in ocr_text_list])
+        # Join without spaces since OCR might already include necessary spaces
+        combined_text = "".join([text[0] for text in ocr_text_list])
         return self.query_qwen2(combined_text)
 
     def process_image(self, image_path):
