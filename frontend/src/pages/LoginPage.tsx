@@ -24,25 +24,37 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#ffffff] flex items-center justify-center">
+    <div className="min-h-screen bg-[#e6f3ff] flex items-center justify-center">
       <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md w-96">
-        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center text-[#161A34]">Login</h2>
         <div className="space-y-4">
           <div>
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            <Label htmlFor="email" className="text-[#161A34]">
+              Email
+            </Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="bg-white border-[#161A34] focus:border-[#161A34] focus:ring-[#161A34] text-[#161A34]"
+            />
           </div>
           <div>
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password" className="text-[#161A34]">
+              Password
+            </Label>
             <Input
               id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              className="bg-white border-[#161A34] focus:border-[#161A34] focus:ring-[#161A34] text-[#161A34]"
             />
           </div>
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-full bg-[#161A34] hover:bg-[#161A34]/90 text-white">
             Login
           </Button>
         </div>
@@ -50,4 +62,3 @@ export function LoginPage() {
     </div>
   )
 }
-

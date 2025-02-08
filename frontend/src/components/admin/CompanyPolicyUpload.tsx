@@ -41,7 +41,7 @@ export function CompanyPolicyUpload() {
                 </div>
               </div>
               <div className="flex-grow">
-                <Input type="file" accept=".pdf" onChange={handleFileChange} className="w-full" />
+                <Input type="file" accept=".pdf" onChange={handleFileChange} className="w-full text-white" />
               </div>
             </div>
             {file && <p className="text-sm text-gray-500">Selected file: {file.name}</p>}

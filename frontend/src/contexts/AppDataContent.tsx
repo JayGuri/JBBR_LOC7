@@ -6,21 +6,18 @@ import type { AppData, User, Report, ExpenseCategory, CompanyPolicy } from "../t
 
 // Dummy data
 const dummyData: AppData = {
-  currentUser: {
-    id: "1",
-    name: "John Doe",
-    email: "john@example.com",
-    role: "admin",
-  },
+  currentUser: null,
   users: [
-    { id: "1", name: "John Doe", email: "john@example.com", role: "admin" },
-    { id: "2", name: "Jane Smith", email: "jane@example.com", role: "user" },
-    { id: "3", name: "Mike Johnson", email: "mike@example.com", role: "user" },
+    { id: "1", name: "Jay", email: "jay@example.com", role: "admin" },
+    { id: "2", name: "Aish", email: "aish@example.com", role: "admin" },
+    { id: "3", name: "Harshil", email: "harshil@example.com", role: "admin" },
+    { id: "4", name: "Akshat", email: "akshat@example.com", role: "admin" },
+    { id: "5", name: "Jay Mguri", email: "jaymguri@gmail.com", role: "user" },
   ],
   reports: [
     {
       id: "1",
-      userId: "2",
+      userId: "5",
       title: "Business Lunch",
       amount: 75.5,
       date: "2023-05-15",
@@ -31,7 +28,7 @@ const dummyData: AppData = {
     },
     {
       id: "2",
-      userId: "2",
+      userId: "5",
       title: "Office Supplies",
       amount: 150.25,
       date: "2023-05-16",
@@ -42,7 +39,7 @@ const dummyData: AppData = {
     },
     {
       id: "3",
-      userId: "3",
+      userId: "5",
       title: "Travel Expenses",
       amount: 500.0,
       date: "2023-05-17",
@@ -79,6 +76,7 @@ interface AppDataContextType extends AppData {
   updateCompanyPolicy: (policy: CompanyPolicy) => void
   login: (email: string, password: string) => Promise<User | null>
   logout: () => void
+  signup: (name: string, email: string, password: string) => Promise<User | null>
 }
 
 const AppDataContext = createContext<AppDataContextType | null>(null)
@@ -179,14 +177,49 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
     })
   }
 
+  const signup = async (name: string, email: string, password: string): Promise<User | null> => {
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+
+    // Check if user already exists
+    const existingUser = appData?.users.find((u) => u.email === email)
+    if (existingUser) {
+      return null // User already exists
+    }
+
+    // Create new user
+    const newUser: User = {
+      id: (appData?.users.length + 1).toString(),
+      name,
+      email,
+      role: "user",
+    }
+
+    setAppData((prevData) => {
+      if (!prevData) return null
+      return {
+        ...prevData,
+        users: [...prevData.users, newUser],
+        currentUser: newUser,
+      }
+    })
+
+    return newUser
+  }
+
   const login = async (email: string, password: string): Promise<User | null> => {
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1000))
 
-    const user = dummyData.users.find((u) => u.email === email)
+    const user = appData?.users.find((u) => u.email === email)
     if (user) {
-      setAppData((prevData) => (prevData ? { ...prevData, currentUser: user } : null))
-      return user
+      if (
+        (user.role === "admin" && password === "pass@123") ||
+        (user.email === "jaymguri@gmail.com" && password === "vrishti15")
+      ) {
+        setAppData((prevData) => (prevData ? { ...prevData, currentUser: user } : null))
+        return user
+      }
     }
     return null
   }
@@ -214,6 +247,7 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
     updateCompanyPolicy,
     login,
     logout,
+    signup,
   }
 
   return <AppDataContext.Provider value={contextValue}>{children}</AppDataContext.Provider>
