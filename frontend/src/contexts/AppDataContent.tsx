@@ -77,6 +77,8 @@ interface AppDataContextType extends AppData {
   updateExpenseCategory: (category: ExpenseCategory) => void
   addCompanyPolicy: (policy: CompanyPolicy) => void
   updateCompanyPolicy: (policy: CompanyPolicy) => void
+  login: (email: string, password: string) => Promise<User | null>
+  logout: () => void
 }
 
 const AppDataContext = createContext<AppDataContextType | null>(null)
@@ -177,6 +179,26 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
     })
   }
 
+  const login = async (email: string, password: string): Promise<User | null> => {
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+
+    const user = dummyData.users.find((u) => u.email === email)
+    if (user) {
+      setAppData((prevData) => (prevData ? { ...prevData, currentUser: user } : null))
+      return user
+    }
+    return null
+  }
+
+  const logout = () => {
+    setAppData((prevData) => {
+      if (!prevData) return null
+      const { currentUser, ...rest } = prevData
+      return { ...rest, currentUser: null }
+    })
+  }
+
   if (!appData) {
     return <div>Loading...</div>
   }
@@ -190,6 +212,8 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
     updateExpenseCategory,
     addCompanyPolicy,
     updateCompanyPolicy,
+    login,
+    logout,
   }
 
   return <AppDataContext.Provider value={contextValue}>{children}</AppDataContext.Provider>

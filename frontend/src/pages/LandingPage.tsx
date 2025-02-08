@@ -1,6 +1,7 @@
 import { Navbar } from "../components/Navbar"
 import { useAppData } from "../contexts/AppDataContent"
 import { useNavigate } from "react-router-dom"
+import { Button } from "@/components/ui/button"
 
 interface LandingPageProps {
   customImageSrc: string
@@ -33,20 +34,26 @@ export function LandingPage({ customImageSrc }: LandingPageProps) {
             </p>
             <div className="flex gap-4">
               {currentUser ? (
-                <button
+                <Button
                   className="px-8 py-3 bg-[#ffdbdb] rounded-full text-[#000000] font-medium text-lg transition-all duration-300 ease-in-out hover:bg-[#ffc9c9] hover:transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-[#ffdbdb] focus:ring-opacity-50"
                   onClick={() => navigate("/upload")}
                 >
                   Upload Receipt
-                </button>
+                </Button>
               ) : (
                 <>
-                  <button className="px-8 py-3 bg-[#ffdbdb] rounded-full text-[#000000] font-medium text-lg transition-all duration-300 ease-in-out hover:bg-[#ffc9c9] hover:transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-[#ffdbdb] focus:ring-opacity-50">
+                  <Button
+                    className="px-8 py-3 bg-[#ffdbdb] rounded-full text-[#000000] font-medium text-lg transition-all duration-300 ease-in-out hover:bg-[#ffc9c9] hover:transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-[#ffdbdb] focus:ring-opacity-50"
+                    onClick={() => navigate("/login")}
+                  >
                     Login
-                  </button>
-                  <button className="px-8 py-3 bg-[#ffdbdb] rounded-full text-[#000000] font-medium text-lg transition-all duration-300 ease-in-out hover:bg-[#ffc9c9] hover:transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-[#ffdbdb] focus:ring-opacity-50">
+                  </Button>
+                  <Button
+                    className="px-8 py-3 bg-[#ffdbdb] rounded-full text-[#000000] font-medium text-lg transition-all duration-300 ease-in-out hover:bg-[#ffc9c9] hover:transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-[#ffdbdb] focus:ring-opacity-50"
+                    onClick={() => navigate("/signup")}
+                  >
                     Sign Up
-                  </button>
+                  </Button>
                 </>
               )}
             </div>

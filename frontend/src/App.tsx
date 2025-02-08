@@ -3,7 +3,8 @@ import { LandingPage } from "./pages/LandingPage"
 import { UploadPage } from "./pages/UploadPage"
 import { ReportsPage } from "./pages/ReportsPage"
 import { AdminPage } from "./pages/AdminPage"
-import { AppDataProvider } from "../src/contexts/AppDataContent"
+import { LoginPage } from "./pages/LoginPage"
+import { AppDataProvider } from "./contexts/AppDataContent"
 
 export default function App() {
   const customImageSrc = "/hero.jpg" // Your hero image path
@@ -16,6 +17,7 @@ export default function App() {
           <Route path="/upload" element={<UploadPage />} />
           <Route path="/reports" element={<ReportsPage />} />
           <Route path="/admin/*" element={<AdminPage />} />
+          <Route path="/login" element={<LoginPage />} />
         </Routes>
       </Router>
     </AppDataProvider>

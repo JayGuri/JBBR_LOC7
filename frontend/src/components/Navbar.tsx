@@ -1,8 +1,14 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useAppData } from "../contexts/AppDataContent"
 
 export function Navbar() {
-  const { currentUser } = useAppData()
+  const { currentUser, logout } = useAppData()
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout()
+    navigate("/")
+  }
 
   return (
     <nav className="flex items-center justify-between px-12 py-6 bg-[#161A34]">
@@ -19,12 +25,29 @@ export function Navbar() {
             {item}
           </Link>
         ))}
-        {currentUser.role === "admin" && (
+        {currentUser ? (
+          <>
+            {currentUser.role === "admin" && (
+              <Link
+                to="/admin"
+                className="text-gray-300 hover:text-white transition-colors text-sm font-light tracking-wide"
+              >
+                Admin
+              </Link>
+            )}
+            <button
+              onClick={handleLogout}
+              className="text-gray-300 hover:text-white transition-colors text-sm font-light tracking-wide"
+            >
+              Logout
+            </button>
+          </>
+        ) : (
           <Link
-            to="/admin"
+            to="/login"
             className="text-gray-300 hover:text-white transition-colors text-sm font-light tracking-wide"
           >
-            Admin
+            Login
           </Link>
         )}
       </div>
