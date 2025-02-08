@@ -12,10 +12,10 @@ export function LandingPage({ customImageSrc }: LandingPageProps) {
       <div className="flex-1 flex flex-col">
         {/* Main Content */}
         <div className="flex-1 flex items-start justify-between">
-          {" "}
-          {/* Updated className */}
           {/* Left Side - Text Content */}
-          <div className="max-w-xl pl-12 mt-0">
+          <div className="max-w-xl pl-12 mt-20">
+            {" "}
+            {/* Updated: added mt-20 to lower the content */}
             <h1 className="text-[80px] font-normal leading-tight text-[#000000]">
               Discover
               <br />
@@ -39,10 +39,8 @@ export function LandingPage({ customImageSrc }: LandingPageProps) {
           </div>
           {/* Right Side - Custom Image */}
           <div className="relative h-full flex-1">
-            {" "}
-            {/* Updated container */}
             <img
-              src={customImageSrc || "../hero.jpg"}
+              src={customImageSrc || "/placeholder.svg?height=600&width=800"}
               alt="Custom illustration"
               className="absolute top-0 right-0 h-full w-auto object-cover object-right"
             />
