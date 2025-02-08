@@ -1,15 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
-
-const dummyData = [
-  { category: "Food & Beverages", amount: 5000 },
-  { category: "Travel", amount: 8000 },
-  { category: "Office Supplies", amount: 3000 },
-  { category: "Equipment", amount: 6000 },
-  { category: "Miscellaneous", amount: 2000 },
-]
+import { useAppData } from "../../contexts/AppDataContent"
 
 export function AdminDashboard() {
+  const { expenseCategories } = useAppData()
+
   return (
     <div className="space-y-8">
       <h1 className="text-3xl font-semibold text-gray-800">Expense Overview</h1>
@@ -20,7 +15,7 @@ export function AdminDashboard() {
         <CardContent>
           <div className="h-[400px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={dummyData}>
+              <BarChart data={expenseCategories}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="category" />
                 <YAxis />

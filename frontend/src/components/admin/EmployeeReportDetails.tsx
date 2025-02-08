@@ -6,54 +6,13 @@ import { Button } from "../ui/button"
 import { Badge } from "../ui/badge"
 import { Textarea } from "../ui/textarea"
 import { AlertTriangle, CheckCircle, XCircle } from "lucide-react"
+import { useAppData } from "../../contexts/AppDataContent"
+import type { Report } from "../../types/data"
 
 interface EmployeeReportDetailsProps {
   employeeId: string
   onBack: () => void
 }
-
-type ReportStatus = "pending" | "approved" | "rejected"
-type AITag = "green" | "yellow" | "red"
-
-interface Report {
-  id: string
-  title: string
-  amount: number
-  date: string
-  status: ReportStatus
-  aiTag: AITag
-  description: string
-}
-
-const dummyReports: Report[] = [
-  {
-    id: "1",
-    title: "Business Lunch",
-    amount: 75.5,
-    date: "2023-05-15",
-    status: "pending",
-    aiTag: "green",
-    description: "Lunch meeting with potential client",
-  },
-  {
-    id: "2",
-    title: "Office Supplies",
-    amount: 150.25,
-    date: "2023-05-16",
-    status: "pending",
-    aiTag: "yellow",
-    description: "Purchased new printer cartridges and paper",
-  },
-  {
-    id: "3",
-    title: "Travel Expenses",
-    amount: 500.0,
-    date: "2023-05-17",
-    status: "pending",
-    aiTag: "red",
-    description: "Flight and hotel for conference",
-  },
-]
 
 const aiTagConfig = {
   green: { color: "bg-green-100 text-green-800", Icon: CheckCircle, text: "Likely Approved" },
@@ -62,22 +21,21 @@ const aiTagConfig = {
 }
 
 export function EmployeeReportDetails({ employeeId, onBack }: EmployeeReportDetailsProps) {
-  const [reports, setReports] = useState<Report[]>(dummyReports)
+  const { reports: allReports, users } = useAppData()
+  const [reports, setReports] = useState<Report[]>(allReports.filter((report) => report.userId === employeeId))
   const [selectedReport, setSelectedReport] = useState<Report | null>(null)
   const [explanation, setExplanation] = useState("")
 
+  const employee = users.find((user) => user.id === employeeId)
+
   const handleApprove = (reportId: string) => {
-    setReports(
-      reports.map((report) => (report.id === reportId ? { ...report, status: "approved" as ReportStatus } : report)),
-    )
+    setReports(reports.map((report) => (report.id === reportId ? { ...report, status: "approved" } : report)))
     setSelectedReport(null)
     setExplanation("")
   }
 
   const handleReject = (reportId: string) => {
-    setReports(
-      reports.map((report) => (report.id === reportId ? { ...report, status: "rejected" as ReportStatus } : report)),
-    )
+    setReports(reports.map((report) => (report.id === reportId ? { ...report, status: "rejected" } : report)))
     setSelectedReport(null)
     setExplanation("")
   }
@@ -89,7 +47,7 @@ export function EmployeeReportDetails({ employeeId, onBack }: EmployeeReportDeta
       </Button>
       <Card>
         <CardHeader>
-          <CardTitle>Reports for Employee {employeeId}</CardTitle>
+          <CardTitle>Reports for {employee?.name || `Employee ${employeeId}`}</CardTitle>
         </CardHeader>
         <CardContent>
           <ul className="space-y-4">
@@ -128,7 +86,7 @@ export function EmployeeReportDetails({ employeeId, onBack }: EmployeeReportDeta
       {selectedReport && (
         <Card>
           <CardHeader>
-            <CardTitle >Review Report: {selectedReport.title}</CardTitle>
+            <CardTitle>Review Report: {selectedReport.title}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">

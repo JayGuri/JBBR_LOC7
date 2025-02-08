@@ -7,18 +7,19 @@ import { Badge } from "../ui/badge"
 import { Input } from "../ui/input"
 import { Search } from "lucide-react"
 import { EmployeeReportDetails } from "./EmployeeReportDetails"
-
-const dummyEmployees = [
-  { id: "1", name: "John Doe", pendingReports: 3 },
-  { id: "2", name: "Jane Smith", pendingReports: 2 },
-  { id: "3", name: "Mike Johnson", pendingReports: 1 },
-]
+import { useAppData } from "../../contexts/AppDataContent"
 
 export function AdminReports() {
+  const { users, reports } = useAppData()
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedEmployee, setSelectedEmployee] = useState<string | null>(null)
 
-  const filteredEmployees = dummyEmployees.filter((employee) =>
+  const employeesWithPendingReports = users.map((user) => ({
+    ...user,
+    pendingReports: reports.filter((report) => report.userId === user.id && report.status === "pending").length,
+  }))
+
+  const filteredEmployees = employeesWithPendingReports.filter((employee) =>
     employee.name.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
@@ -59,7 +60,7 @@ export function AdminReports() {
                   <div className="flex items-center space-x-2">
                     <Badge variant="outline">{employee.pendingReports} Pending</Badge>
                     <Button variant="outline" className="text-white" onClick={() => handleViewReports(employee.id)}>
-                    View Reports
+                      View Reports
                     </Button>
                   </div>
                 </li>
