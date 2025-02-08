@@ -62,7 +62,8 @@ export function LandingPage({ customImageSrc }: LandingPageProps) {
           background: "linear-gradient(135deg, #FF8A4C 0%, #FF6B24 100%)",
           opacity: 0.8,
         }}
-      />
+      />console.log('Rendering LandingPage component');
+console.log('Custom image source:', customImageSrc);
     </div>
   )
 }
