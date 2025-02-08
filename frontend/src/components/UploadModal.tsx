@@ -8,9 +8,10 @@ import { Upload, X } from "lucide-react"
 interface UploadModalProps {
   isOpen: boolean
   onClose: () => void
+  onUpload: (file: File) => void
 }
 
-export function UploadModal({ isOpen, onClose }: UploadModalProps) {
+export function UploadModal({ isOpen, onClose, onUpload }: UploadModalProps) {
   const [file, setFile] = useState<File | null>(null)
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,9 +22,7 @@ export function UploadModal({ isOpen, onClose }: UploadModalProps) {
 
   const handleUpload = () => {
     if (file) {
-      // Handle file upload logic here
-      console.log("Uploading file:", file.name)
-      // Reset file and close modal after upload
+      onUpload(file)
       setFile(null)
       onClose()
     }
@@ -40,7 +39,7 @@ export function UploadModal({ isOpen, onClose }: UploadModalProps) {
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid w-full items-center gap-1.5">
-            <Label htmlFor="receipt" className="text-sm sm:text-base text-[#ffffff]">
+            <Label htmlFor="receipt" className="text-sm sm:text-base text-[#000000]">
               Receipt
             </Label>
             <div className="flex items-center gap-2">
