@@ -1,5 +1,6 @@
 import { Navbar } from "../components/Navbar"
 import { useAppData } from "../contexts/AppDataContent"
+import { useNavigate } from "react-router-dom"
 
 interface LandingPageProps {
   customImageSrc: string
@@ -7,6 +8,7 @@ interface LandingPageProps {
 
 export function LandingPage({ customImageSrc }: LandingPageProps) {
   const { currentUser } = useAppData()
+  const navigate = useNavigate()
 
   return (
     <div className="h-screen bg-[#ffffff] relative overflow-hidden flex flex-col">
@@ -31,8 +33,11 @@ export function LandingPage({ customImageSrc }: LandingPageProps) {
             </p>
             <div className="flex gap-4">
               {currentUser ? (
-                <button className="px-8 py-3 bg-[#ffdbdb] rounded-full text-[#000000] font-medium text-lg transition-all duration-300 ease-in-out hover:bg-[#ffc9c9] hover:transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-[#ffdbdb] focus:ring-opacity-50">
-                  Dashboard
+                <button
+                  className="px-8 py-3 bg-[#ffdbdb] rounded-full text-[#000000] font-medium text-lg transition-all duration-300 ease-in-out hover:bg-[#ffc9c9] hover:transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-[#ffdbdb] focus:ring-opacity-50"
+                  onClick={() => navigate("/upload")}
+                >
+                  Upload Receipt
                 </button>
               ) : (
                 <>
