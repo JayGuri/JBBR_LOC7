@@ -25,76 +25,80 @@ class ReceiptProcessor:
     def query_qwen2(self, text):
         """Sends text to the locally running Qwen2.5-3B model with a focused prompt"""
         prompt = f"""
-        Analyze this receipt text and extract key information. The text may have missing spaces or joined words due to OCR processing.
+        You are a precise receipt information extractor. Extract information from the following receipt text into a specific JSON format.
 
-        Example of how text might appear:
-        - "WalmartStore" instead of "Walmart Store"
-        - "Rs.1450.00" or "Rs1450.00" instead of "Rs. 1450.00"
-        - "Date:25/01/2024" instead of "Date: 25/01/2024"
-        - "GSTIN27XXXXX" instead of "GSTIN: 27XXXXX"
-        - "billno12345" or "invoiceno12345" instead of "Bill No: 12345"
-        - "inv8179912"" or "invoiceno123" instead of invoice : 8179912"" or "invoiceno : 123" or "Invoice : 817991 "
-        
-        Look for these patterns or similar to these:
-        1. GST numbers:
-        - "GSTIN27AAAAA1234A1Z5"
-        - "gst27AAAAA1234A1Z5"
-        - "gstin27AAAAA1234A1Z5"
-        - Any 15-character sequence starting with numbers
+        Key things to look for:
+        1. Vendor name is usually business name or store name
+        2. Amount/total is usually at the bottom, after subtotal, tax, etc
+        3. Date could be anywhere but often at top or bottom
+        4. GST number usually starts with state code (2 digits) followed by letters and numbers
+        5. Bill/invoice number might be labeled as ref no, order no, etc
 
-        2. Bill/Invoice numbers or similar to these :
-        - "billno12345"
-        - "invoiceno123"
-        - "bill#12345"
-        - "inv8179912"
-        -"inv : 7821971"
-        - Look for numbers near words like "bill", "invoice", "ref", "no",inv,Inv,1nv
-        
-        3. Amounts like:
-        - "1450.00"
-        - "Rs1450"
-        - "₹1,450.00"
-        - "1450/-"
-        - "amountdue1450"
-        
-        4. Dates like:
-        - "25/01/2024"
-        - "25-01-2024"
-        - "date25012024"
-        - "dt25012024"
+        Categories to use:
+        - Grocery (for supermarkets, grocery stores)
+        - Restaurant (for food service, cafes)
+        - Electronics (for electronics stores)
+        - Services (for services)
+        - Travelling (for petrol, transport)
+    
 
-        Receipt text to analyze:
-        \"\"\"{text}\"\"\"
+        INPUT TEXT:
+        {text}
 
-        Return only this JSON format with these exact fields:
+        Respond ONLY with valid JSON in this exact format, nothing else:
         {{
-            "vendor": "Store name",
-            "amount": "Total amount (numbers only, no currency symbols)",
-            "date": "YYYY-MM-DD format if possible",
-            "category": "Grocery/Restaurant/Electronics/General/Services",
-            "gst_number": "15-character GST number if found, empty string if not found",
-            "bill_number": "Bill/invoice number if found, empty string if not found"
+            "vendor": "Store or business name",
+            "amount": "Total amount as numbers only",
+            "date": "YYYY-MM-DD if found, otherwise empty string",
+            "category": "One of the categories listed above",
+            "gst_number": "15-character GST number if found, otherwise empty string",
+            "bill_number": "Any reference/bill/invoice number found, otherwise empty string"
         }}
         """
         
         response = ollama.chat(
             model='qwen2.5:3b',
             messages=[{"role": "user", "content": prompt}],
-            options={"temperature": 0.25}
+            options={
+                "temperature": 0.1,  # Lower temperature for more consistent outputs
+                "top_p": 0.1,        # More focused sampling
+                "frequency_penalty": 0.1  # Reduce repetition
+            }
         )
         json_text = response['message']['content'].strip()
         
+        # Clean up common JSON formatting issues
+        json_text = json_text.replace('\n', ' ').strip()
+        if json_text.startswith('```json'):
+            json_text = json_text[7:]
+        if json_text.endswith('```'):
+            json_text = json_text[:-3]
+        json_text = json_text.strip()
+        
         try:
             structured_data = json.loads(json_text)
+            # Ensure all required fields exist
+            required_fields = ["vendor", "amount", "date", "category", "gst_number", "bill_number"]
+            for field in required_fields:
+                if field not in structured_data:
+                    structured_data[field] = ""
             return structured_data
         except json.JSONDecodeError:
             print(f"Error: Invalid JSON response for text: {text[:100]}...")
-            return None
+            # Return a valid but empty response instead of None
+            return {
+                "vendor": "",
+                "amount": "",
+                "date": "",
+                "category": "General",
+                "gst_number": "",
+                "bill_number": ""
+            }
 
     def process_receipt(self, ocr_text_list):
         """Process single receipt text to structured data"""
-        # Join without spaces since OCR might already include necessary spaces
-        combined_text = "".join([text[0] for text in ocr_text_list])
+        # Combine with newlines to preserve structure
+        combined_text = "\n".join([text[0] for text in ocr_text_list])
         return self.query_qwen2(combined_text)
 
     def process_image(self, image_path):
@@ -114,6 +118,7 @@ class ReceiptProcessor:
     def process_batch(self):
         """Process all images in the directory and save results"""
         all_results = {}
+        successful_count = 0
         
         # Get all image files
         image_files = [f for f in os.listdir(self.images_dir) 
@@ -128,6 +133,7 @@ class ReceiptProcessor:
             
             if result:
                 all_results[image_file] = result
+                successful_count += 1
         
         # Save results
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -137,4 +143,5 @@ class ReceiptProcessor:
             json.dump(all_results, f, indent=4)
         
         print(f"\nProcessing complete! Results saved to {output_file}")
+        print(f"Successfully processed {successful_count} out of {len(image_files)} receipts")
         return all_results
