@@ -6,14 +6,16 @@ interface LandingPageProps {
 
 export function LandingPage({ customImageSrc }: LandingPageProps) {
   return (
-    <div className="min-h-screen bg-[#ffffff] relative overflow-hidden flex flex-col">
+    <div className="h-screen bg-[#ffffff] relative overflow-hidden flex flex-col">
       <Navbar />
 
       <div className="flex-1 flex flex-col">
         {/* Main Content */}
-        <div className="flex-1 flex items-center justify-between">
+        <div className="flex-1 flex items-start justify-between">
+          {" "}
+          {/* Updated className */}
           {/* Left Side - Text Content */}
-          <div className="max-w-xl pl-12">
+          <div className="max-w-xl pl-12 mt-0">
             <h1 className="text-[80px] font-normal leading-tight text-[#000000]">
               Discover
               <br />
@@ -35,21 +37,20 @@ export function LandingPage({ customImageSrc }: LandingPageProps) {
               </button>
             </div>
           </div>
-
           {/* Right Side - Custom Image */}
-          <div className="relative h-full flex-1 flex items-center justify-end">
-            <div className="w-[85%] h-full overflow-hidden">
-              <img
-                src={customImageSrc || "../hero.jpg"}
-                alt="Custom illustration"
-                className="w-full h-full object-cover object-center"
-              />
-            </div>
+          <div className="relative h-full flex-1">
+            {" "}
+            {/* Updated container */}
+            <img
+              src={customImageSrc || "../hero.jpg"}
+              alt="Custom illustration"
+              className="absolute top-0 right-0 h-full w-auto object-cover object-right"
+            />
           </div>
         </div>
 
         {/* Bottom Content */}
-        <div className="text-center mb-20 px-12">
+        <div className="text-center mb-8 px-12">
           <h2 className="text-5xl font-normal text-[#000000] mb-3">Uncover the Truth</h2>
           <p className="text-gray-500 text-lg">dive deep into the world of fraud detection</p>
         </div>
@@ -62,8 +63,7 @@ export function LandingPage({ customImageSrc }: LandingPageProps) {
           background: "linear-gradient(135deg, #FF8A4C 0%, #FF6B24 100%)",
           opacity: 0.8,
         }}
-      />console.log('Rendering LandingPage component');
-console.log('Custom image source:', customImageSrc);
+      />
     </div>
   )
 }
