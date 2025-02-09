@@ -1,7 +1,7 @@
 from processor import ReceiptProcessor
 
 if __name__ == "__main__":
-    processor = ReceiptProcessor(input_dir='LOC_7.0/images', output_dir='output')
+    processor = ReceiptProcessor(input_dir='LOC_7.0/images', output_dir='C:/PF/Projects/LOC_7.0/output')
     results = processor.process_batch()
 
     # Print summary

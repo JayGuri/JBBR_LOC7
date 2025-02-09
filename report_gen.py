@@ -17,7 +17,7 @@ def generate_expense_reports(data):
         # Prompt user for justification
         justification_text = input("Enter justification: ").strip()
         if not justification_text:
-            justification_text = "Business-related expense supporting regular operations"
+            justification_text = ""
 
         # Add justification directly to the JSON structure
         bill_data["justification"] = justification_text
@@ -25,7 +25,7 @@ def generate_expense_reports(data):
     return data
 
 # File path for the JSON data
-file_path = "C:/PF/Projects/LOC_7.0/output/receipt_results_20250209_023337.json"
+file_path = "C:/PF/Projects/LOC_7.0/output/receipt_results.json"
 
 # Open and load the JSON file
 with open(file_path, "r", encoding="utf-8") as file:

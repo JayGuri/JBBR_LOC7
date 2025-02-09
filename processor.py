@@ -81,7 +81,7 @@ class ReceiptProcessor:
         - Restaurant (for food service, cafes)
         - Electronics (for electronics stores)
         - Services (for services)
-        - Petrol(for petrol)
+        - Fuel (for petrol or diesal or gas)
         - Cab services(for Uber or Ola or rapido)
         - Entertainment(for movies or shows or concerts)
         - General (for other retail)
@@ -217,7 +217,7 @@ class ReceiptProcessor:
         
         # Save results
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_file = os.path.join(self.output_dir, f'receipt_results_{timestamp}.json')
+        output_file = os.path.join(self.output_dir, f'receipt_results.json')
         
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(all_results, f, indent=4)
